@@ -21,7 +21,9 @@ declare interface User extends CreateUserParams {
 declare interface RegisterUserParams
   extends InferType<typeof PatientFormValidation>,
     CreateUserParams {
-  identificationDocument: FormData | undefined;
+  userid: string;
+  identificationDocumentId: string | undefined;
+  identificationDocumentUrl: string | undefined;
 }
 
 declare interface CreateAppointmentParams

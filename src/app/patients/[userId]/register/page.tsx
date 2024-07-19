@@ -6,13 +6,10 @@ import { getPatient, getUser } from "@/server/actions/patient.actions";
 import { SearchParamProps } from "@/types";
 
 const Register = async ({ params: { userId } }: SearchParamProps) => {
-  // const user = await getUser(userId);
+  const user = await getUser(userId);
   // const patient = await getPatient(userId);
 
   // if (patient) redirect(`/patients/${userId}/new-appointment`);
-
-  // console.log(user);
-  const user = "";
 
   return (
     <div className="flex min-h-screen">

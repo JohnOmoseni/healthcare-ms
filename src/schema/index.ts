@@ -1,5 +1,16 @@
 import * as yup from "yup";
 
+// Define the file validation schema
+const FILE_SIZE = 4 * 1024 * 1024; // 4MB
+export const SUPPORTED_FORMATS = [
+  "image/jpeg",
+  "image/png",
+  "image/svg+xml",
+  "application/pdf",
+  "text/plain",
+  "application/msword",
+];
+
 export const UserFormValidation = yup.object().shape({
   name: yup
     .string()
@@ -67,7 +78,17 @@ export const PatientFormValidation = yup.object().shape({
   pastMedicalHistory: yup.string().optional(),
   identificationType: yup.string().optional(),
   identificationNumber: yup.string().optional(),
-  identificationDocument: yup.string().optional(),
+  identificationDocument: yup
+    .mixed()
+    .test("fileSize", "File is too large", (value: any) => {
+      if (!value) return true; // allow empty values
+      return (value as File).size <= FILE_SIZE;
+    })
+    .test("fileFormat", "Unsupported file format", (value: any) => {
+      if (!value) return true; // allow empty values
+      return SUPPORTED_FORMATS.includes((value as File).type);
+    })
+    .optional(),
   treatmentConsent: yup
     .boolean()
     .oneOf([true], "You must consent to treatment in order to proceed")

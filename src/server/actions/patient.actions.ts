@@ -2,9 +2,8 @@
 
 import { handleApiError, parseStringify } from "@/lib/utils";
 import { ID, Query } from "node-appwrite";
-import fs from "fs";
-
 import {
+  API_KEY,
   BUCKET_ID,
   DATABASE_ID,
   ENDPOINT,
@@ -15,6 +14,11 @@ import {
   users,
 } from "../appWrite.config";
 import { CreateUserParams, RegisterUserParams } from "@/types";
+import fs from "fs";
+import FormData from "form-data";
+import axios from "axios";
+
+const storageEndpoint = `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files`;
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -60,9 +64,10 @@ export const getPatient = async (userId: string) => {
     const patients = await databases.listDocuments(
       DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
-      [Query.equal("userId", [userId])],
+      [Query.equal("userid", [userId])],
     );
 
+    if (!patients) throw new Error("Patient not found");
     return parseStringify(patients.documents[0]);
   } catch (error) {
     handleApiError(
@@ -78,42 +83,12 @@ export const registerPatient = async ({
   ...patient
 }: RegisterUserParams) => {
   try {
-    // Upload file ->  // https://appwrite.io/docs/references/cloud/client-web/storage#createFile
-    let file;
-    if (identificationDocument) {
-      const filePath = identificationDocument.get("filePath") as string;
-      const fileName = identificationDocument.get("fileName") as string;
-
-      const inputFile = fs.createReadStream(filePath);
-
-      file = await storage.createFile(
-        BUCKET_ID!,
-        ID.unique(),
-        inputFile,
-        fileName,
-      );
-    }
-    if (identificationDocument) {
-      const inputFile =
-        identificationDocument &&
-        InputFile.fromBlob(
-          identificationDocument?.get("blobFile") as Blob,
-          identificationDocument?.get("fileName") as string,
-        );
-
-      file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile);
-    }
-
-    // Create new patient document -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#createDocument
+    // Create new patient document
     const newPatient = await databases.createDocument(
       DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
       ID.unique(),
       {
-        identificationDocumentId: file?.$id ? file.$id : null,
-        identificationDocumentUrl: file?.$id
-          ? `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file.$id}/view??project=${PROJECT_ID}`
-          : null,
         ...patient,
       },
     );
@@ -121,5 +96,6 @@ export const registerPatient = async ({
     return parseStringify(newPatient);
   } catch (error) {
     console.error("An error occurred while creating a new patient:", error);
+    handleApiError(error, "An error occurred while creating a new patient");
   }
 };

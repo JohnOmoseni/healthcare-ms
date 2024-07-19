@@ -192,7 +192,7 @@ const CustomFormField = (props: CustomProps) => {
     <div
       className={cn(
         "group w-full",
-        errors?.[name] || (errors?.[name] && touched?.[name]) ? "is-error" : "",
+        errors?.[name] && touched?.[name] ? "is-error" : "",
       )}
     >
       {fieldType !== FormFieldType.CHECKBOX && label && (

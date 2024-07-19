@@ -7,10 +7,11 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/Button";
 import { Upload } from "@/constants/icons";
 import { useToast } from "@/components/ui/use-toast";
+import { SUPPORTED_FORMATS } from "@/schema";
 
 type FileUploaderProps = {
-  file: string | undefined;
-  onChange: (url: string) => void;
+  file: File;
+  onChange: (file: File) => void;
 };
 
 export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
@@ -19,7 +20,7 @@ export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
 
-    if (!selectedFile.type.startsWith("image/")) {
+    if (!SUPPORTED_FORMATS.includes(selectedFile.type)) {
       toastNotify(toast, "Please select a JPG, PNG, or SVG file.", "");
       return;
     }
@@ -30,7 +31,7 @@ export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
       return;
     }
 
-    onChange(convertFileToUrl(selectedFile));
+    onChange(selectedFile);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -56,7 +57,7 @@ export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
       {file ? (
         <div className="flex h-full w-full flex-1 justify-center">
           <Image
-            src={file}
+            src={convertFileToUrl(file)}
             width={1000}
             height={1000}
             alt="uploaded image"

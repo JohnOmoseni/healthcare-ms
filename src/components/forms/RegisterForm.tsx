@@ -17,11 +17,14 @@ import { PatientFormValidation } from "@/schema";
 import { Label } from "../ui/label";
 import { FileUploader } from "@/app/patients/_sections/FileUploader";
 import { registerPatient } from "@/server/actions/patient.actions";
-import { Gender, User } from "@/types";
+import { Gender, RegisterUserParams, User } from "@/types";
 import { useToast } from "../ui/use-toast";
 import { Value } from "react-phone-number-input";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { toastNotify } from "@/lib/utils";
+import { useUploadThing } from "@/utils/uploadthing";
+
+import { v4 as uuid } from "uuid";
 import FormWrapper from "./FormWrapper";
 import CustomFormField, { FormFieldType } from "./CustomFormField";
 
@@ -32,38 +35,38 @@ const RegisterForm = ({ user }: { user: User }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { startUpload } = useUploadThing("imageUploader");
 
   const onSubmit = async (values: InferType<typeof PatientFormValidation>) => {
     setIsLoading(true);
 
+    let fileUrl;
+    const file = values.identificationDocument;
+
     console.log(values);
 
-    return;
+    // upload image to uploadthing
+    if (file) {
+      const uploadedFile = await startUpload([file] as File[]);
+      if (!uploadedFile) return;
 
-    // Store file info in form data as
-    let formData;
-    // if (
-    //   values.identificationDocument
-    // ) {
-    //   const blobFile = new Blob([values.identificationDocument], {
-    //     type: values.identificationDocument.type,
-    //   });
+      console.log(uploadedFile);
 
-    //   formData = new FormData();
-    //   formData.append("blobFile", blobFile);
-    //   formData.append("fileName", values.identificationDocument.name);
-    // }
+      fileUrl = uploadedFile?.[0].url;
+    }
 
     try {
       const patient = {
         ...values,
-        userId: user.$id,
+        identificationDocument: "",
+        userid: user.$id,
         birthDate: new Date(values.birthDate as Date),
         gender: values.gender as Gender,
-        identificationDocument: values.identificationDocument
-          ? formData
-          : undefined,
+        identificationDocumentId: fileUrl ? uuid() : "",
+        identificationDocumentUrl: fileUrl?.toString(),
       };
+
+      console.log(patient);
 
       const newPatient = await registerPatient(patient);
 
@@ -104,7 +107,7 @@ const RegisterForm = ({ user }: { user: User }) => {
       subtitle="Let us know more about yourself."
       buttonLabel="Get Started"
       onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
+      isSubmitting={isLoading}
     >
       <div className="mb-6">
         <h3 className="sub-header">Personal Information</h3>
@@ -119,8 +122,8 @@ const RegisterForm = ({ user }: { user: User }) => {
         iconSrc="/icons/user.svg"
         onChange={handleChange}
         onBlur={handleBlur}
-        errors={errors}
         touched={touched}
+        errors={errors}
       />
 
       {/* EMAIL & PHONE */}
@@ -147,10 +150,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           label="Phone number"
           field={{ value: values.phone, placeholder: "(555) 123-4567" }}
           onChange={(value: Value) => {
-            handleChange({
-              target: "phone",
-              value,
-            });
+            setFieldValue("phone", value);
           }}
           onBlur={handleBlur}
           errors={errors}
@@ -166,12 +166,11 @@ const RegisterForm = ({ user }: { user: User }) => {
           label="Date of birth"
           field={{ value: values.birthDate?.toString() }}
           onChange={(date: Date) => {
-            handleChange({
-              target: "birthDate",
-              value: date,
-            });
+            setFieldValue("birthDate", date);
           }}
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
 
         <CustomFormField
@@ -179,6 +178,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           name="gender"
           label="Gender"
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
           renderSkeleton={() => (
             <div>
               <RadioGroup
@@ -212,6 +213,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           }}
           onChange={handleChange}
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
 
         <CustomFormField
@@ -221,6 +224,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           field={{ value: values.occupation, placeholder: "Software Engineer" }}
           onChange={handleChange}
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
       </div>
 
@@ -236,6 +241,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           }}
           onChange={handleChange}
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
 
         <CustomFormField
@@ -246,8 +253,12 @@ const RegisterForm = ({ user }: { user: User }) => {
             value: values.emergencyContactNumber,
             placeholder: "(555) 123-4567",
           }}
-          onChange={handleChange}
+          onChange={(value: Value) =>
+            setFieldValue("emergencyContactNumber", value)
+          }
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
       </div>
 
@@ -265,7 +276,12 @@ const RegisterForm = ({ user }: { user: User }) => {
             value: values.primaryPhysician,
             placeholder: "Select a physician",
           }}
-          onChange={handleChange}
+          onChange={(value: string) => {
+            setFieldValue("primaryPhysician", value);
+          }}
+          errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         >
           {Doctors.map((doctor, i) => (
             <SelectItem key={doctor.name + i} value={doctor.name}>
@@ -275,7 +291,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                   width={32}
                   height={32}
                   alt="doctor"
-                  className="rounded-full border border-border"
+                  className="!rounded-full border border-border object-cover"
                 />
                 <p>{doctor.name}</p>
               </div>
@@ -309,6 +325,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             }}
             onChange={handleChange}
             errors={errors}
+            onBlur={handleBlur}
+            touched={touched}
           />
         </div>
 
@@ -324,6 +342,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             }}
             onChange={handleChange}
             errors={errors}
+            onBlur={handleBlur}
+            touched={touched}
           />
 
           <CustomFormField
@@ -335,7 +355,9 @@ const RegisterForm = ({ user }: { user: User }) => {
               placeholder: "Ibuprofen 200mg, Levothyroxine 50mcg",
             }}
             onChange={handleChange}
+            errors={errors}
             onBlur={handleBlur}
+            touched={touched}
           />
         </div>
 
@@ -351,6 +373,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             }}
             onChange={handleChange}
             onBlur={handleBlur}
+            errors={errors}
+            touched={touched}
           />
 
           <CustomFormField
@@ -383,10 +407,15 @@ const RegisterForm = ({ user }: { user: User }) => {
             value: values.identificationType,
             placeholder: "Select identification type",
           }}
-          onChange={handleChange}
+          onChange={(value: string) =>
+            setFieldValue("identificationType", value)
+          }
+          errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         >
           {IdentificationTypes.map((type, i) => (
-            <SelectItem key={type + i} value={type}>
+            <SelectItem key={type + i} value={type} className="pl-8">
               {type}
             </SelectItem>
           ))}
@@ -401,20 +430,23 @@ const RegisterForm = ({ user }: { user: User }) => {
             placeholder: "123456789",
           }}
           onChange={handleChange}
+          errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
 
         <CustomFormField
           fieldType={FormFieldType.SKELETON}
           name="identificationDocument"
           label="Scanned Copy of Identification Document"
+          errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
           renderSkeleton={() => (
             <FileUploader
-              file={values.identificationDocument}
-              onChange={(url) => {
-                handleChange({
-                  target: "identificationDocument",
-                  value: url,
-                });
+              file={values.identificationDocument as File}
+              onChange={(file) => {
+                setFieldValue("identificationDocument", file);
               }}
             />
           )}
@@ -437,6 +469,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             setFieldValue("treatmentConsent", value);
           }}
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
 
         <CustomFormField
@@ -451,6 +485,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             setFieldValue("disclosureConsent", value);
           }}
           errors={errors}
+          onBlur={handleBlur}
+          touched={touched}
         />
 
         <CustomFormField
@@ -466,6 +502,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           }}
           errors={errors}
           onBlur={handleBlur}
+          touched={touched}
         />
       </section>
     </FormWrapper>
