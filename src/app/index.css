@@ -1,0 +1,196 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* @font-face {
+  font-family: "Raleway";
+  src: url("/fonts/Raleway-Regular.ttf");
+} */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #131619; /* bg-dark-300 */
+    --background-100: #1a1d21; /* bg-input bg-dark-400 */
+    --background-200: #0d0f10; /* bg-table-header bg-admin-header bg-dark-200*/
+
+    --foreground: #e8e9e9; /* bg-light-200 */
+    --foreground-100: #abb8c4;
+
+    --secondary: #24ae7c;
+    --secondary-100: #0d2a1f;
+
+    --border: #363a3d; /* bg-dark-500 */
+    --border-100: #1d2125ea;
+
+    --grey: #abb8c4; /* bg-dark-700 */
+    --grey-100: #76828d; /* bg-dark-600 */
+
+    --input: #1a1d21; /* bg-input bg-dark-400 */
+    --ring: #76828d; /* bg-dark-600 */
+
+    --muted: #222;
+    --muted-foreground: #abb8c4;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --drop-shadow: #1d2125e1; /* bg-dark-200 */
+    --scroll-bg: #0d0f10;
+
+    --radius: 0.5rem;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1 {
+    @apply font-plus_sans text-primaryFont font-bold;
+  }
+  h2 {
+    @apply font-plus_sans text-secondaryFont font-semibold;
+  }
+  h3 {
+    @apply text-subtitle font-medium;
+  }
+}
+
+@layer utilities {
+  .row-flex {
+    @apply flex flex-row flex-nowrap items-center justify-center align-middle;
+  }
+  .row-flex-start {
+    @apply row-flex !justify-start;
+  }
+  .row-flex-btwn {
+    @apply flex flex-row flex-nowrap items-center justify-between align-middle;
+  }
+  .flex-column {
+    @apply flex flex-col items-start justify-center;
+  }
+  .p-subtitle {
+    @apply w-full max-w-[60ch] text-grey max-sm:text-center sm:text-xl;
+  }
+  .i-reset {
+    @apply overflow-hidden truncate whitespace-nowrap rounded-none border-0 border-none bg-transparent outline-none;
+  }
+  .badge {
+    @apply line-clamp-1 inline-flex w-min items-center rounded-full px-3 py-1 text-sm font-semibold capitalize transition-colors focus:outline-none focus:ring-1 focus:ring-ring focus:ring-offset-1;
+  }
+  .btn {
+    @apply rounded-lg bg-secondary text-white;
+  }
+  .copyright {
+    @apply justify-items-end pt-10 text-center text-base md:text-left;
+  }
+  .sub-header {
+    @apply text-center lg:text-left;
+  }
+  .sub-container {
+    @apply mx-auto flex size-full flex-1 flex-col pb-4 pt-10;
+  }
+  .side-img {
+    @apply relative hidden w-full self-stretch md:block;
+  }
+  /* =====  RADIO GROUO CONTAINER */
+  .radio-group {
+    @apply row-flex-start h-full flex-1 gap-2 rounded-md border border-dashed border-border bg-input p-3;
+  }
+
+  /* =====  REACT DATE PICKER OVERRIDES */
+  .date-picker {
+    @apply h-11 w-full overflow-hidden rounded-md border-transparent px-3 outline-none placeholder:text-grey-100;
+  }
+
+  /* =====  REACT PHONE NUMBER INPUT OVERRIDES */
+  .input-phone {
+    @apply mt-2 h-11 rounded-md border border-border bg-input px-3 text-sm placeholder:text-grey-100 !important;
+  }
+  /* =====  REACT DATE PICKER OVERRIDES */
+  .date-picker {
+    @apply h-11 w-full overflow-hidden rounded-md border-transparent pl-3 outline-none placeholder:text-grey-100 !important;
+  }
+
+  /* =====  SHADCN OVERRIDES */
+  .shad-primary-btn {
+    @apply bg-secondary focus:ring-green-600 !important;
+  }
+
+  .shad-danger-btn {
+    @apply bg-red-700 focus:ring-red-600 !important;
+  }
+
+  .shad-gray-btn {
+    @apply border border-border bg-background-100 !important;
+  }
+
+  .shad-input {
+    @apply border-border bg-input text-grey transition-all placeholder:text-grey-100 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+  }
+
+  .shad-textarea {
+    @apply border-border bg-input placeholder:text-grey-100 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+  }
+
+  .shad-combobox-trigger {
+    @apply h-11 !important;
+  }
+
+  .shad-select-trigger {
+    @apply h-11 border-border bg-input placeholder:text-grey-100;
+  }
+
+  .shad-select-content {
+    @apply border-border bg-input !important;
+  }
+
+  .shad-dialog {
+    @apply border-border bg-input !important;
+  }
+
+  .shad-dialog button {
+    @apply focus:ring-0 focus:ring-offset-0 focus-visible:border-none focus-visible:outline-none focus-visible:ring-transparent focus-visible:ring-offset-0 !important;
+  }
+
+  .shad-table {
+    @apply overflow-hidden rounded-lg !important;
+  }
+
+  .shad-table-row-header {
+    @apply border-b border-input hover:bg-transparent !important;
+  }
+
+  .shad-table-row {
+    @apply border-b border-input !important;
+  }
+
+  .shad-otp {
+    @apply row-flex-btwn w-full !important;
+  }
+
+  .shad-otp-slot {
+    @apply row-flex size-16 rounded-lg border border-border bg-input shadow-sm !important;
+  }
+
+  .shad-alert-dialog {
+    @apply space-y-5 border-border bg-input outline-none !important;
+  }
+
+  /* ==== Status Badge */
+  .status-badge {
+    @apply flex w-fit items-center gap-2 rounded-full px-4 py-2;
+  }
+
+  /* Data Table */
+  .data-table {
+    @apply z-10 w-full overflow-hidden rounded-lg border border-border shadow-lg;
+  }
+
+  .table-actions {
+    @apply row-flex-btwn w-full space-x-2 p-4;
+  }
+}
+
+@layer components {
+}
