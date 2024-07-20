@@ -70,7 +70,7 @@
     @apply flex flex-col items-start justify-center;
   }
   .p-subtitle {
-    @apply w-full max-w-[60ch] text-grey max-sm:text-center sm:text-xl;
+    @apply w-full max-w-[60ch] text-grey max-sm:text-center sm:text-lg;
   }
   .i-reset {
     @apply overflow-hidden truncate whitespace-nowrap rounded-none border-0 border-none bg-transparent outline-none;
@@ -131,10 +131,6 @@
 
   .shad-textarea {
     @apply border-border bg-input placeholder:text-grey-100 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
-  }
-
-  .shad-combobox-trigger {
-    @apply h-11 !important;
   }
 
   .shad-select-trigger {

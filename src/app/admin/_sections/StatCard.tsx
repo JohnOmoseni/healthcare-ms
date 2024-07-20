@@ -12,7 +12,7 @@ export const StatCard = ({ count = 0, label, icon, type }: StatCardProps) => {
   return (
     <div
       className={clsx(
-        "flex-column min-w-[250px] flex-1 gap-6 overflow-hidden rounded-2xl bg-[#00000033] bg-cover p-6 bg-blend-exclusion shadow-lg",
+        "flex-column min-w-[200px] flex-1 gap-6 overflow-hidden rounded-2xl bg-[#00000033] bg-cover p-6 bg-blend-exclusion shadow-lg",
         {
           "bg-appointments": type === "appointments",
           "bg-pending": type === "pending",
@@ -31,7 +31,7 @@ export const StatCard = ({ count = 0, label, icon, type }: StatCardProps) => {
         <h2 className="flex-1 text-white">{count}</h2>
       </div>
 
-      <p className="leading-6 sm:max-w-[16ch]">{label}</p>
+      <p className="leading-6 md:max-w-[16ch]">{label}</p>
     </div>
   );
 };

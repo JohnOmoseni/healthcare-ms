@@ -37,7 +37,7 @@ function FormWrapper({
       <div className="mx-auto mt-10 w-full">
         {showHeading && (
           <section className="mb-12 space-y-2">
-            <h2 className="text-xl max-sm:text-center">{title}</h2>
+            <h3 className="max-sm:text-center">{title}</h3>
             <p className="p-subtitle">{subtitle}</p>
           </section>
         )}

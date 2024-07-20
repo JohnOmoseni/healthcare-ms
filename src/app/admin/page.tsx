@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { columns } from "@/components/table/columns";
 import { DataTable } from "@/components/table/DataTable";
-import { StatCard } from "@/components/StatCard";
+import { StatCard } from "@/app/admin/_sections/StatCard";
 import { getRecentAppointmentList } from "@/server/actions/appointment.actions";
 import { testColumns } from "@/components/table/test-columns";
 import { payments } from "@/components/table/page";
@@ -33,13 +33,13 @@ const AdminPage = async () => {
 
       <main className="flex-column !items-center space-y-6 px-[5%] pb-12 lg:space-y-12 lg:px-10">
         <section className="w-full space-y-4">
-          <h1 className="max-md:center">Welcome 👋</h1>
+          <h1 className="max-sm:text-center">Welcome 👋</h1>
           <p className="p-subtitle">
             Start the day with managing new appointments
           </p>
         </section>
 
-        <section className="flex w-full flex-col items-stretch justify-between gap-5 sm:flex-row lg:gap-10">
+        <section className="flex w-full flex-col items-stretch justify-between gap-5 md:flex-row lg:gap-10">
           <StatCard
             type="appointments"
             count={appointments?.scheduledCount}
